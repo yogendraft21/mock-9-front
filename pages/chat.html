@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Page</title>
+    <link rel="stylesheet" href="../styles/style.css" />
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2>Group Chat</h2>
+        <p id="username">Welcome, User123!</p>
+      </div>
+      <div class="chat-messages">
+        <!-- <div class="message">
+				<p class="meta">User123 <span>12:30pm</span></p>
+				<p class="text">Hello, how are you?</p>
+			</div>
+			<div class="message">
+				<p class="meta">User456 </p>
+				<p class="text">I'm good, thanks for asking. How about you?</p>
+			</div> -->
+        <!-- more messages here -->
+      </div>
+      <div class="chat-form">
+        <input type="text" placeholder="Type a message..." id="message" />
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+		const tkn = localStorage.getItem("chat-token")
+		console.log(tkn);
+      if (tkn!=null) {
+        const socket = io.connect("http://localhost:8081/");
+        console.log(socket);
+
+        // get username from user
+        const username = localStorage.getItem("chat-email")
+        document.querySelector("#username").innerHTML = `Welcome, ${username}!`;
+
+        // send message when send button is clicked
+        document.querySelector("#send-btn").addEventListener("click", () => {
+          const message = document.querySelector("#message").value.trim();
+
+          if (message) {
+            // console.log(message);
+            socket.emit("chatMessage", { username, message });
+            document.querySelector("#message").value = "";
+          }
+        });
+
+        // display received message
+        socket.on("chatMessage", ({ username, message, time }) => {
+          const chatMessages = document.querySelector(".chat-messages");
+
+          const div = document.createElement("div");
+          div.classList.add("message");
+
+          const meta = document.createElement("p");
+          meta.classList.add("meta");
+          meta.innerHTML = `${username}`;
+
+          const text = document.createElement("p");
+          text.classList.add("text");
+          text.textContent = message;
+
+          div.appendChild(meta);
+          div.appendChild(text);
+          chatMessages.appendChild(div);
+
+          // scroll to bottom of messages
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+      }else{
+		alert("Login First");
+		location.href = "./login.html"
+	  }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Signup Page</h1>
+    <form id="signup-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required /><br />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required /><br />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required /><br />
+
+      <button type="submit" id="submit-btn">Signup</button>
+      <p><a href="./login.html">Already Have Account?</a></p>
+    </form>
+
+    <script>
+      const signUpForm = document.querySelector("#signup-form");
+      signUpForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const formData = new FormData(signUpForm);
+
+        const requestData = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: formData.get("username"),
+            email: formData.get("email"),
+            password: formData.get("password"),
+          }),
+        };
+
+        fetch("http://localhost:8081/api/register", requestData)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert("Your Account Created Successfully and Check your email for verification link")
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+    </script>
+  </body>
+</html>
